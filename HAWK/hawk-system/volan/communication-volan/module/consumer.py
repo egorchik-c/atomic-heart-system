@@ -7,40 +7,36 @@ from .producer import proceed_to_deliver
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
 
-def send_telemetry(id, details):
-    print("[DEBUG] Telemetry: ", details["telemetry"])
-    validator(id, {"valid": details["telemetry"]})
+def sending(id, details):
+    proceed_to_deliver(id, {
+        "deliver_to": "chipher-volan",
+        "operation": "send_data",
+        "data": details["data"]
+    })
+    print(f"[DEBUG] Send to Chipher: ", details["data"])
 
-def data_to_valid(id, details):
-    print("[DEBUG] Data: ", details["data"])
-    validator(id, {"mb_valid": details["data"]})
+def to_security(id, details):
+    # Доделать
+    # proceed_to_deliver(id, {
+    #     "deliver_to": "communication-security",
+    #     "operation": "send_data",
+    #     "data": details["data"]
+    # })
+    print(f"[DEBUG] Send to Security module: ", details["data"])
 
-data_dict = {}
-
-# Имитация сопоставления данных с видео, с данными телеметрии
-def validator(id, details):
-    print(f"[{MODULE_NAME}] Our data: {details}")
-    global data_dict
-
-    if len(data_dict) > 2:
-        data_dict = {}
-    data_dict.update(details)
-    print("TO-VALID = ", data_dict)
-
-    if data_dict["valid"].get("motion_detected") == data_dict["mb_valid"].get("motion_detected"):
-        print(f"[{MODULE_NAME}] Send data:", data_dict["mb_valid"])
-        proceed_to_deliver(id, {
-            "deliver_to": "chipher",
-            "operation": "send_to_chipher",
-            "data": data_dict["mb_valid"]
-        })
-    else:
-        print(f"[{MODULE_NAME}] ERROR: no valid video")
+def to_repair(id, details):
+    # Доделать
+    # proceed_to_deliver(id, {
+    #     "deliver_to": "communication-repair",
+    #     "operation": "send_data",
+    #     "data": details["data"]
+    # })
+    print(f"[DEBUG] Send to Repair module: ", details["data"])
     
-
 commands = {
-    "data_to_valid": data_to_valid,
-    "send_telemetry": send_telemetry
+    "send_to_volan": sending,
+    "to_security": to_security,
+    "to_repair": to_repair
 }
 
 def handle_event(id, details_str):
@@ -53,8 +49,7 @@ def handle_event(id, details_str):
 
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
-
-    # Выполнение нужной команды
+    
     command = commands.get(operation)
     if command:
         command(id, details)

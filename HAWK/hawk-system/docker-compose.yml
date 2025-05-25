@@ -103,3 +103,105 @@ services:
       - ./shared:/shared
     ports:
       - 8003:8003
+  
+  chipher:
+    build: ./romashka/chipher
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: chipher
+    environment:
+      - MODULE_NAME=chipher
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8004:8004
+  
+  communication:
+    build: ./romashka/communication
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: communication
+    environment:
+      - MODULE_NAME=communication
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8005:8005
+
+  communication-volan:
+    build: ./volan/communication-volan
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: communication-volan
+    environment:
+      - MODULE_NAME=communication-volan
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8006:8006
+
+  chipher-volan:
+    build: ./volan/chipher-volan
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: chipher-volan
+    environment:
+      - MODULE_NAME=chipher-volan
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8007:8007
+
+  analysis-volan:
+    build: ./volan/analysis-volan
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: analysis-volan
+    environment:
+      - MODULE_NAME=analysis-volan
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8008:8008
+
+  distributor-volan:
+    build: ./volan/distributor-volan
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: distributor-volan
+    environment:
+      - MODULE_NAME=distributor-volan
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8009:8009

@@ -6,42 +6,22 @@ from confluent_kafka import Consumer, OFFSET_BEGINNING
 from .producer import proceed_to_deliver
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
+HASH_PATH: str = "/shared/hash"
 
-def send_telemetry(id, details):
-    print("[DEBUG] Telemetry: ", details["telemetry"])
-    validator(id, {"valid": details["telemetry"]})
+def chipher_event(id, details):
+    print("[DEBUG] Before hash: ", details["data"])
 
-def data_to_valid(id, details):
-    print("[DEBUG] Data: ", details["data"])
-    validator(id, {"mb_valid": details["data"]})
+    hash_val = "this-is-hash-imit"
+    with open(HASH_PATH, "w") as file:
+        file.write(hash_val)
 
-data_dict = {}
-
-# Имитация сопоставления данных с видео, с данными телеметрии
-def validator(id, details):
-    print(f"[{MODULE_NAME}] Our data: {details}")
-    global data_dict
-
-    if len(data_dict) > 2:
-        data_dict = {}
-    data_dict.update(details)
-    print("TO-VALID = ", data_dict)
-
-    if data_dict["valid"].get("motion_detected") == data_dict["mb_valid"].get("motion_detected"):
-        print(f"[{MODULE_NAME}] Send data:", data_dict["mb_valid"])
-        proceed_to_deliver(id, {
-            "deliver_to": "chipher",
-            "operation": "send_to_chipher",
-            "data": data_dict["mb_valid"]
-        })
-    else:
-        print(f"[{MODULE_NAME}] ERROR: no valid video")
+    details["data"].update({"signature": hash_val})
+    proceed_to_deliver(id, {
+        "deliver_to": "communication",
+        "operation": "send",
+        "data": details["data"]
+    })
     
-
-commands = {
-    "data_to_valid": data_to_valid,
-    "send_telemetry": send_telemetry
-}
 
 def handle_event(id, details_str):
     """ Обработчик входящих в модуль задач. """
@@ -54,10 +34,7 @@ def handle_event(id, details_str):
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
 
-    # Выполнение нужной команды
-    command = commands.get(operation)
-    if command:
-        command(id, details)
+    chipher_event(id, details)
 
 def consumer_job(args, config):
     consumer = Consumer(config)

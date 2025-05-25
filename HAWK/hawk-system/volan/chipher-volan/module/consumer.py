@@ -6,41 +6,29 @@ from confluent_kafka import Consumer, OFFSET_BEGINNING
 from .producer import proceed_to_deliver
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
+HASH_PATH: str = "/shared/hash"
 
-def send_telemetry(id, details):
-    print("[DEBUG] Telemetry: ", details["telemetry"])
-    validator(id, {"valid": details["telemetry"]})
-
-def data_to_valid(id, details):
+def send_data(id, details):
     print("[DEBUG] Data: ", details["data"])
-    validator(id, {"mb_valid": details["data"]})
 
-data_dict = {}
+    with open(HASH_PATH, "r") as file:
+        hash_val = file.readline()
 
-# Имитация сопоставления данных с видео, с данными телеметрии
-def validator(id, details):
-    print(f"[{MODULE_NAME}] Our data: {details}")
-    global data_dict
+    print("HASH: ", hash_val)
 
-    if len(data_dict) > 2:
-        data_dict = {}
-    data_dict.update(details)
-    print("TO-VALID = ", data_dict)
-
-    if data_dict["valid"].get("motion_detected") == data_dict["mb_valid"].get("motion_detected"):
-        print(f"[{MODULE_NAME}] Send data:", data_dict["mb_valid"])
+    if details["data"].get("signature") == hash_val:
+        del details["data"]["signature"]
         proceed_to_deliver(id, {
-            "deliver_to": "chipher",
-            "operation": "send_to_chipher",
-            "data": data_dict["mb_valid"]
+            "deliver_to": "analysis-volan",
+            "operation": "data_to_process",
+            "data": details["data"]
         })
+        print("[DEBUG] Send this: ", details["data"])
     else:
-        print(f"[{MODULE_NAME}] ERROR: no valid video")
+        print("[ERROR] No-valid hash!")
     
-
 commands = {
-    "data_to_valid": data_to_valid,
-    "send_telemetry": send_telemetry
+    "send_data": send_data
 }
 
 def handle_event(id, details_str):
@@ -54,7 +42,6 @@ def handle_event(id, details_str):
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
 
-    # Выполнение нужной команды
     command = commands.get(operation)
     if command:
         command(id, details)
