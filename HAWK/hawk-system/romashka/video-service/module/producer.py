@@ -13,9 +13,14 @@ requests_queue: multiprocessing.Queue = None
 
 def get_video():
     while True:
+        # sample_video = {
+        #     "video-file": "some video",
+        #     "person": choice(["EGOR CHERNOV", "IVAN REICHMAN", "NABLEY OMELCHENKO", "SPIDER MAN", "REPAIR"])
+        # }
+
         sample_video = {
-            "video-file": "some video",
-            "person": choice(["EGOR CHERNOV", "IVAN REICHMAN", "NABLEY OMELCHENKO", "SPIDER MAN"])
+            "video-file": "video",
+            "person": "EGOR CHERNOV"
         }
 
         print(f"[{MODULE_NAME}] Video to sending: {sample_video}")

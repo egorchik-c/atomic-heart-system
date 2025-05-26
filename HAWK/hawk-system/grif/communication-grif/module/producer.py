@@ -5,32 +5,11 @@ import threading
 
 from uuid  import uuid4
 from confluent_kafka import Producer
+from random import getrandbits
 from time import sleep
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
 requests_queue: multiprocessing.Queue = None
-
-def get_telemetry():
-    while True:
-        telemetry = {
-            "motion_detected": True,
-        }
-
-        print(f"[{MODULE_NAME}] Telemetry data: {telemetry}")
-
-        proceed_to_deliver(uuid4().__str__(), {
-            "deliver_to": "data-collector",
-            "operation": "send_telemetry",
-            "telemetry": telemetry
-        })
-
-        proceed_to_deliver(uuid4().__str__(), {
-            "deliver_to": "validator",
-            "operation": "send_telemetry",
-            "telemetry": telemetry
-        })
-
-        sleep(10)
 
 def proceed_to_deliver(id, details):
     details["id"] = id
@@ -40,7 +19,8 @@ def proceed_to_deliver(id, details):
 def producer_job(_, config, request_queue: multiprocessing.Queue):
     producer = Producer(config)
 
-    threading.Thread(target=get_telemetry).start()
+    # threading.Thread(target=get_telemetry).start()
+
     def delivery_callback(err, msg):
         if err:
             print(f"[{MODULE_NAME}] Message failed delivery: {err}")
@@ -56,7 +36,7 @@ def producer_job(_, config, request_queue: multiprocessing.Queue):
         )
         producer.poll(15000)
         producer.flush()
-        print(f"[{MODULE_NAME}] Send telemetry: {event_details}")
+        print(f"[{MODULE_NAME}] Send data to chipher: {event_details}")
 
 def start_producer(args, config, request_queue):
     print(f"[{MODULE_NAME}] Producer started...")

@@ -1,56 +1,30 @@
 import os
 import json
 import threading
+import requests
 
 from confluent_kafka import Consumer, OFFSET_BEGINNING
 from .producer import proceed_to_deliver
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
-HASH_PATH: str = "/shared/hash"
+KOLLEKTIV_URL: str = "http://kollektiv:8012/logs"
 
-def sending(id, details):
+def to_access(id, details):
     proceed_to_deliver(id, {
-        "deliver_to": "chipher-volan",
+        "deliver_to": "chipher-grif",
         "operation": "send_data",
         "data": details["data"]
     })
     print(f"[DEBUG] Send to Chipher: ", details["data"])
 
-def to_security(id, details):
-    # Доделать
-    # proceed_to_deliver(id, {
-    #     "deliver_to": "communication-security",
-    #     "operation": "send_data",
-    #     "data": details["data"]
-    # })
-    print(f"[DEBUG] Send to Security module: ", details["data"])
+def to_kollektiv(id, details):
+    print("[DEBUG] KOLLLLLLEEEEKTIV", details["data"])
 
-def to_repair(id, details):
-    # Доделать
-    # proceed_to_deliver(id, {
-    #     "deliver_to": "communication-repair",
-    #     "operation": "send_data",
-    #     "data": details["data"]
-    # })
-    print(f"[DEBUG] Send to Repair module: ", details["data"])
-
-def to_access(id, details):
-    with open(HASH_PATH, "r") as file:
-        hash_val = file.readline()
-
-    details["data"].update({"signature": hash_val})
-    proceed_to_deliver(id, {
-        "deliver_to": "communication-grif",
-        "operation": "to_access",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Grif (access): ", details["data"])
+    requests.post(KOLLEKTIV_URL, json=details["data"])
     
 commands = {
-    "send_to_volan": sending,
-    "to_security": to_security,
-    "to_repair": to_repair,
-    "person_to_access": to_access
+    "to_access": to_access,
+    "valid_data": to_kollektiv
 }
 
 def handle_event(id, details_str):

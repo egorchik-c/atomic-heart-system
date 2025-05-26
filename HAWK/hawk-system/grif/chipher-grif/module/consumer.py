@@ -8,49 +8,25 @@ from .producer import proceed_to_deliver
 MODULE_NAME: str = os.getenv("MODULE_NAME")
 HASH_PATH: str = "/shared/hash"
 
-def sending(id, details):
-    proceed_to_deliver(id, {
-        "deliver_to": "chipher-volan",
-        "operation": "send_data",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Chipher: ", details["data"])
+def send_data(id, details):
+    print("[DEBUG] Data: ", details["data"])
 
-def to_security(id, details):
-    # Доделать
-    # proceed_to_deliver(id, {
-    #     "deliver_to": "communication-security",
-    #     "operation": "send_data",
-    #     "data": details["data"]
-    # })
-    print(f"[DEBUG] Send to Security module: ", details["data"])
-
-def to_repair(id, details):
-    # Доделать
-    # proceed_to_deliver(id, {
-    #     "deliver_to": "communication-repair",
-    #     "operation": "send_data",
-    #     "data": details["data"]
-    # })
-    print(f"[DEBUG] Send to Repair module: ", details["data"])
-
-def to_access(id, details):
     with open(HASH_PATH, "r") as file:
         hash_val = file.readline()
 
-    details["data"].update({"signature": hash_val})
-    proceed_to_deliver(id, {
-        "deliver_to": "communication-grif",
-        "operation": "to_access",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Grif (access): ", details["data"])
+    if details["data"].get("signature") == hash_val:
+        del details["data"]["signature"]
+        proceed_to_deliver(id, {
+            "deliver_to": "communication-grif",
+            "operation": "valid_data",
+            "data": details["data"]
+        })
+        print("[DEBUG] Send this: ", details["data"])
+    else:
+        print("[ERROR] No-valid hash!")
     
 commands = {
-    "send_to_volan": sending,
-    "to_security": to_security,
-    "to_repair": to_repair,
-    "person_to_access": to_access
+    "send_data": send_data
 }
 
 def handle_event(id, details_str):
@@ -63,7 +39,7 @@ def handle_event(id, details_str):
 
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
-    
+
     command = commands.get(operation)
     if command:
         command(id, details)

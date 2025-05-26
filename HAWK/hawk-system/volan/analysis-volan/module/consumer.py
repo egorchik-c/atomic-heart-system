@@ -18,12 +18,12 @@ def process_data(id, details):
 
     if details["data"]["person"] in db.keys():
         print(f"[{MODULE_NAME}] To Access: ", details["data"]["person"])
-        # ДОРАБОТАТЬ ЛОГИКУ ДОСТУПА
-        # proceed_to_deliver(id, {
-        #     "deliver_to": "access-volan",
-        #     "operation": "person-to-access",
-        #     "data": details["data"]
-        # })
+        details["data"].update({"event": "access"})
+        proceed_to_deliver(id, {
+            "deliver_to": "communication-volan",
+            "operation": "person_to_access",
+            "data": details["data"]
+        })
     else:
         print(f"[{MODULE_NAME}] To Distributor: ", details["data"])
         proceed_to_deliver(id, {

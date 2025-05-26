@@ -11,7 +11,7 @@ MODULE_NAME: str = os.getenv("MODULE_NAME")
 def distribute_data(id, details):
     print("[DEBUG] Data: ", details["data"])
     
-    if bool(getrandbits(1)):
+    if details["data"]["person"] != "REPAIR":
         print(f"[{MODULE_NAME}] Send to security module")
         details["data"].update({"event": "security"})
         proceed_to_deliver(id, {

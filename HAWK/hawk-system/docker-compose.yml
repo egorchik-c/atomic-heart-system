@@ -36,6 +36,21 @@ services:
     volumes:
       - ./shared:/shared
 
+  kollektiv:
+    build: ./kollektiv
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py 
+    container_name: kollektiv
+    environment:
+      - MODULE_NAME=kollektiv
+    ports:
+      - "8012:8012"
+
   video-service:
     build: ./romashka/video-service
     entrypoint:
@@ -205,3 +220,37 @@ services:
       - ./shared:/shared
     ports:
       - 8009:8009
+
+  communication-grif:
+    build: ./grif/communication-grif
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: communication-grif
+    environment:
+      - MODULE_NAME=communication-grif
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8010:8010
+
+  chipher-grif:
+    build: ./grif/chipher-grif
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: chipher-grif
+    environment:
+      - MODULE_NAME=chipher-grif
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8011:8011

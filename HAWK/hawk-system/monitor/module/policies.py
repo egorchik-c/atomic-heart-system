@@ -14,8 +14,13 @@ policies = (
     {"src": "communication-volan", "dst": "chipher-volan", "opr": "send_data"},
     {"src": "chipher-volan", "dst": "analysis-volan", "opr": "data_to_process"},
     {"src": "analysis-volan", "dst": "distributor-volan", "opr": "distribute-event"},
+    {"src": "analysis-volan", "dst": "communication-volan", "opr": "person_to_access"},
     {"src": "distributor-volan", "dst": "communication-volan", "opr": "to_security"},
-    {"src": "distributor-volan", "dst": "communication-volan", "opr": "to_repair"}
+    {"src": "distributor-volan", "dst": "communication-volan", "opr": "to_repair"},
+    {"src": "communication-volan", "dst": "communication-grif", "opr": "to_access"},
+
+    {"src": "communication-grif", "dst": "chipher-grif", "opr": "send_data"},
+    {"src": "chipher-grif", "dst": "communication-grif", "opr": "valid_data"}
 )
 
 def check_operation(id, details) -> bool:
