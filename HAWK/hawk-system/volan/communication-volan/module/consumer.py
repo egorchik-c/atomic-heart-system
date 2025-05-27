@@ -26,31 +26,31 @@ def to_security(id, details):
     print(f"[DEBUG] Send to Security module: ", details["data"])
 
 def to_repair(id, details):
-    # Доделать
-    # proceed_to_deliver(id, {
-    #     "deliver_to": "communication-repair",
-    #     "operation": "send_data",
-    #     "data": details["data"]
-    # })
+    proceed_to_deliver(id, {
+        "deliver_to": "communication-repair",
+        "operation": "data_to_repair",
+        "data": details["data"]
+    })
     print(f"[DEBUG] Send to Repair module: ", details["data"])
 
-def to_access(id, details):
+def to_grif(id, details):
     with open(HASH_PATH, "r") as file:
         hash_val = file.readline()
 
     details["data"].update({"signature": hash_val})
     proceed_to_deliver(id, {
         "deliver_to": "communication-grif",
-        "operation": "to_access",
+        "operation": "to_grif",
         "data": details["data"]
     })
-    print(f"[DEBUG] Send to Grif (access): ", details["data"])
+    print(f"[DEBUG] Send to Grif: ", details["data"])
     
 commands = {
     "send_to_volan": sending,
     "to_security": to_security,
     "to_repair": to_repair,
-    "person_to_access": to_access
+    "person_to_access": to_grif,
+    "repair_report": to_grif
 }
 
 def handle_event(id, details_str):

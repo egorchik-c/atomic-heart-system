@@ -1,31 +1,23 @@
 import os
 import json
 import threading
-import requests
 
 from confluent_kafka import Consumer, OFFSET_BEGINNING
 from .producer import proceed_to_deliver
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
-KOLLEKTIV_URL: str = "http://kollektiv:8012/logs"
 
-def to_chipher(id, details):
+def activate_repair(id, details):
+    del details["data"]["event"]
+
+    details["data"].update({"status": "scanning..."})
+
     proceed_to_deliver(id, {
-        "deliver_to": "chipher-grif",
-        "operation": "send_data",
+        "deliver_to": "start-repair",
+        "operation": "repair",
         "data": details["data"]
     })
-    print(f"[DEBUG] Send to Chipher: ", details["data"])
-
-def to_kollektiv(id, details):
-    print("[DEBUG] Send to Kollektiv", details["data"])
-
-    requests.post(KOLLEKTIV_URL, json=details["data"])
-    
-commands = {
-    "to_grif": to_chipher,
-    "valid_data": to_kollektiv
-}
+    print(f"[DEBUG] Send: ", details["data"])
 
 def handle_event(id, details_str):
     """ Обработчик входящих в модуль задач. """
@@ -38,9 +30,7 @@ def handle_event(id, details_str):
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
     
-    command = commands.get(operation)
-    if command:
-        command(id, details)
+    activate_repair(id, details)
 
 def consumer_job(args, config):
     consumer = Consumer(config)

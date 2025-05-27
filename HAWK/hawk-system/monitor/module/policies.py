@@ -17,7 +17,15 @@ policies = (
     {"src": "analysis-volan", "dst": "communication-volan", "opr": "person_to_access"},
     {"src": "distributor-volan", "dst": "communication-volan", "opr": "to_security"},
     {"src": "distributor-volan", "dst": "communication-volan", "opr": "to_repair"},
-    {"src": "communication-volan", "dst": "communication-grif", "opr": "to_access"},
+    {"src": "communication-volan", "dst": "communication-grif", "opr": "to_grif"},
+    {"src": "communication-volan", "dst": "communication-repair", "opr": "data_to_repair"},
+
+    {"src": "communication-repair", "dst": "handle-repair", "opr": "send_data"},
+    {"src": "handle-repair", "dst": "activate-repair", "opr": "activate"},
+    {"src": "activate-repair", "dst": "analysis-repair", "opr": "analysis"},
+    {"src": "analysis-repair", "dst": "start-repair", "opr": "repair"},
+    {"src": "start-repair", "dst": "communication-repair", "opr": "ready_repair"},
+    {"src": "communication-repair", "dst": "communication-volan", "opr": "repair_report"},
 
     {"src": "communication-grif", "dst": "chipher-grif", "opr": "send_data"},
     {"src": "chipher-grif", "dst": "communication-grif", "opr": "valid_data"}

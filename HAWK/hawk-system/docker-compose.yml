@@ -221,6 +221,91 @@ services:
     ports:
       - 8009:8009
 
+  communication-repair:
+    build: ./repair/communication-repair
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: communication-repair
+    environment:
+      - MODULE_NAME=communication-repair
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8013:8013
+
+  handle-repair:
+    build: ./repair/handle-repair
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: handle-repair
+    environment:
+      - MODULE_NAME=handle-repair
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8014:8014
+
+  activate-repair:
+    build: ./repair/activate-repair
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: activate-repair
+    environment:
+      - MODULE_NAME=activate-repair
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8015:8015
+
+  analysis-repair:
+    build: ./repair/analysis-repair
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: analysis-repair
+    environment:
+      - MODULE_NAME=analysis-repair
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8016:8016
+  
+  start-repair:
+    build: ./repair/start-repair
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: start-repair
+    environment:
+      - MODULE_NAME=start-repair
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8017:8017
+
   communication-grif:
     build: ./grif/communication-grif
     entrypoint:
