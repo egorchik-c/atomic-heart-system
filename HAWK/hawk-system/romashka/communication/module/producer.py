@@ -19,8 +19,6 @@ def proceed_to_deliver(id, details):
 def producer_job(_, config, request_queue: multiprocessing.Queue):
     producer = Producer(config)
 
-    # threading.Thread(target=get_telemetry).start()
-
     def delivery_callback(err, msg):
         if err:
             print(f"[{MODULE_NAME}] Message failed delivery: {err}")

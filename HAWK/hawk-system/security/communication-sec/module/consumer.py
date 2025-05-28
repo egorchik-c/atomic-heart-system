@@ -15,9 +15,18 @@ def sending(id, details):
         "data": details["data"]
     })
     print(f"[DEBUG] Send to Chipher: ", details["data"])
+
+def to_volan(id, details):
+    proceed_to_deliver(id, {
+        "deliver_to": "communication-volan",
+        "operation": "report_robot",
+        "data": details["data"]
+    })
+    print(f"[DEBUG] Send to Volan: ", details["data"])
     
 commands = {
-    "data_to_sec": sending
+    "data_to_sec": sending,
+    "report_robot": to_volan
 }
 
 def handle_event(id, details_str):

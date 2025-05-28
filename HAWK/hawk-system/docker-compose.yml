@@ -427,6 +427,142 @@ services:
     ports:
       - 8024:8024
 
+  communication-robot:
+    build: ./robot/communication-robot
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: communication-robot
+    environment:
+      - MODULE_NAME=communication-robot
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8025:8025
+
+  chipher-robot:
+    build: ./robot/chipher-robot
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: chipher-robot
+    environment:
+      - MODULE_NAME=chipher-robot
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8026:8026
+
+  control-sys-robot:
+    build: ./robot/control-sys-robot
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: control-sys-robot
+    environment:
+      - MODULE_NAME=control-sys-robot
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8027:8027
+
+  drivers-robot:
+    build: ./robot/drivers-robot
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: drivers-robot
+    environment:
+      - MODULE_NAME=drivers-robot
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8028:8028
+
+  nav-robot:
+    build: ./robot/nav-robot
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: nav-robot
+    environment:
+      - MODULE_NAME=nav-robot
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8029:8029
+
+  controller-robot:
+    build: ./robot/controller-robot
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: controller-robot
+    environment:
+      - MODULE_NAME=controller-robot
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8030:8030
+
+  gear-robot:
+    build: ./robot/gear-robot
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: gear-robot
+    environment:
+      - MODULE_NAME=gear-robot
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8031:8031
+
+  speakers-robot:
+    build: ./robot/speakers-robot
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: speakers-robot
+    environment:
+      - MODULE_NAME=speakers-robot
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8032:8032
+
   communication-grif:
     build: ./grif/communication-grif
     entrypoint:

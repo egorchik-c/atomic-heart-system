@@ -30,10 +30,6 @@ def send_data(id, details):
         })
     else:
         print("[ERROR] No-valid hash!")
-    
-commands = {
-    "send_data": send_data
-}
 
 def handle_event(id, details_str):
     """ Обработчик входящих в модуль задач. """
@@ -46,9 +42,7 @@ def handle_event(id, details_str):
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
 
-    command = commands.get(operation)
-    if command:
-        command(id, details)
+    send_data(id, details)
 
 def consumer_job(args, config):
     consumer = Consumer(config)

@@ -22,7 +22,7 @@ def validator(id, details):
         proceed_to_deliver(id, {
             "deliver_to": "communication-robot",
             "operation": "to_robot",
-            "command": details["data"]["event"]
+            "data": {"command": details["data"]["event"]}
         })
     else:
         print(f"[{MODULE_NAME}] ERROR: no valid command")

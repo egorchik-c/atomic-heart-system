@@ -53,7 +53,8 @@ commands = {
     "to_security": to_security,
     "to_repair": to_repair,
     "person_to_access": to_grif,
-    "repair_report": to_grif
+    "repair_report": to_grif,
+    "report_robot": to_grif
 }
 
 def handle_event(id, details_str):
