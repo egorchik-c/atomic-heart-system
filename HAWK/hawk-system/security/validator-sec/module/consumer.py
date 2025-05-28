@@ -8,52 +8,29 @@ from .producer import proceed_to_deliver
 MODULE_NAME: str = os.getenv("MODULE_NAME")
 HASH_PATH: str = "/shared/hash"
 
-def sending(id, details):
-    proceed_to_deliver(id, {
-        "deliver_to": "chipher-volan",
-        "operation": "send_data",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Chipher: ", details["data"])
+hash_val = None
 
-def to_security(id, details):
+def hash_to_valid(id, details):
+    global hash_val 
+    hash_val = details["signature"]
+
+def validator(id, details):
     with open(HASH_PATH, "r") as file:
-        hash_val = file.readline()
+        val = file.readline()
 
-    details["data"].update({"signature": hash_val})
-    proceed_to_deliver(id, {
-        "deliver_to": "communication-sec",
-        "operation": "data_to_sec",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Security module: ", details["data"])
-
-def to_repair(id, details):
-    proceed_to_deliver(id, {
-        "deliver_to": "communication-repair",
-        "operation": "data_to_repair",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Repair module: ", details["data"])
-
-def to_grif(id, details):
-    with open(HASH_PATH, "r") as file:
-        hash_val = file.readline()
-
-    details["data"].update({"signature": hash_val})
-    proceed_to_deliver(id, {
-        "deliver_to": "communication-grif",
-        "operation": "to_grif",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Grif: ", details["data"])
+    if val == hash_val:
+        proceed_to_deliver(id, {
+            "deliver_to": "communication-robot",
+            "operation": "to_robot",
+            "command": details["data"]["event"]
+        })
+    else:
+        print(f"[{MODULE_NAME}] ERROR: no valid command")
     
+
 commands = {
-    "send_to_volan": sending,
-    "to_security": to_security,
-    "to_repair": to_repair,
-    "person_to_access": to_grif,
-    "repair_report": to_grif
+    "hash_value": hash_to_valid,
+    "to_valid": validator
 }
 
 def handle_event(id, details_str):
@@ -66,7 +43,8 @@ def handle_event(id, details_str):
 
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
-    
+
+    # Выполнение нужной команды
     command = commands.get(operation)
     if command:
         command(id, details)

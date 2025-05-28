@@ -306,6 +306,127 @@ services:
     ports:
       - 8017:8017
 
+  communication-sec:
+    build: ./security/communication-sec
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: communication-sec
+    environment:
+      - MODULE_NAME=communication-sec
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8018:8018
+
+  chipher-sec:
+    build: ./security/chipher-sec
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: chipher-sec
+    environment:
+      - MODULE_NAME=chipher-sec
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8019:8019
+
+
+  handler-sec:
+      build: ./security/handler-sec
+      entrypoint:
+        - bash
+        - -c
+        - |
+          echo 'Giving Kafka a bit of time to start up…'
+          sleep 25
+          python start.py /shared/config.ini
+      container_name: handler-sec
+      environment:
+        - MODULE_NAME=handler-sec
+      volumes:
+        - ./shared:/shared
+      ports:
+        - 8020:8020
+
+  
+  activate-sec:
+    build: ./security/activate-sec
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: activate-sec
+    environment:
+      - MODULE_NAME=activate-sec
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8021:8021
+
+  events-sec:
+    build: ./security/events-sec
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: events-sec
+    environment:
+      - MODULE_NAME=events-sec
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8022:8022
+
+  distributor-sec:
+    build: ./security/distributor-sec
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: distributor-sec
+    environment:
+      - MODULE_NAME=distributor-sec
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8023:8023
+
+  validator-sec:
+    build: ./security/validator-sec
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: validator-sec
+    environment:
+      - MODULE_NAME=validator-sec
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8024:8024
+
   communication-grif:
     build: ./grif/communication-grif
     entrypoint:

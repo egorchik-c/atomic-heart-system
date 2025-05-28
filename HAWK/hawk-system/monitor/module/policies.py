@@ -19,6 +19,15 @@ policies = (
     {"src": "distributor-volan", "dst": "communication-volan", "opr": "to_repair"},
     {"src": "communication-volan", "dst": "communication-grif", "opr": "to_grif"},
     {"src": "communication-volan", "dst": "communication-repair", "opr": "data_to_repair"},
+    {"src": "communication-volan", "dst": "communication-sec", "opr": "data_to_sec"},
+
+    {"src": "communication-sec", "dst": "chipher-sec", "opr": "send_data"},
+    {"src": "chipher-sec", "dst": "handler-sec", "opr": "valid_data"},
+    {"src": "chipher-sec", "dst": "validator-sec", "opr": "hash_value"},
+    {"src": "handler-sec", "dst": "activate-sec", "opr": "activate"},
+    {"src": "activate-sec", "dst": "events-sec", "opr": "analysis"},
+    {"src": "events-sec", "dst": "distributor-sec", "opr": "send_data"},
+    {"src": "distributor-sec", "dst": "validator-sec", "opr": "to_valid"},
 
     {"src": "communication-repair", "dst": "handle-repair", "opr": "send_data"},
     {"src": "handle-repair", "dst": "activate-repair", "opr": "activate"},
