@@ -34,7 +34,7 @@ def producer_job(_, config, request_queue: multiprocessing.Queue):
         )
         producer.poll(15000)
         producer.flush()
-        print(f"[{MODULE_NAME}] Send data: {event_details}")
+        print(f"[{MODULE_NAME}] Send data with hash: {event_details}")
 
 def start_producer(args, config, request_queue):
     print(f"[{MODULE_NAME}] Producer started...")

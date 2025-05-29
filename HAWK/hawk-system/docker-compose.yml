@@ -563,6 +563,125 @@ services:
     ports:
       - 8032:8032
 
+  user:
+    build: ./terminal/user
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: user
+    environment:
+      - MODULE_NAME=user
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8033:8033
+
+  authentication:
+    build: ./terminal/authentication
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: authentication
+    environment:
+      - MODULE_NAME=authentication
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8034:8034
+
+  validator-card:
+    build: ./terminal/validator-card
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: validator-card
+    environment:
+      - MODULE_NAME=validator-card
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8035:8035
+
+  authorization:
+    build: ./terminal/authorization
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: authorization
+    environment:
+      - MODULE_NAME=authorization
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8036:8036
+
+  handle-command:
+    build: ./terminal/handle-command
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: handle-command
+    environment:
+      - MODULE_NAME=handle-command
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8037:8037
+
+  chipher-terminal:
+    build: ./terminal/chipher-terminal
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: chipher-terminal
+    environment:
+      - MODULE_NAME=chipher-terminal
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8038:8038
+
+  communication-terminal:
+    build: ./terminal/communication-terminal
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: communication-terminal
+    environment:
+      - MODULE_NAME=communication-terminal
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8039:8039
+
   communication-grif:
     build: ./grif/communication-grif
     entrypoint:
@@ -596,3 +715,37 @@ services:
       - ./shared:/shared
     ports:
       - 8011:8011
+
+  handler-grif:
+    build: ./grif/handler-grif
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: handler-grif
+    environment:
+      - MODULE_NAME=handler-grif
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8040:8040
+
+  poweroff-grif:
+    build: ./grif/poweroff-grif
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: poweroff-grif
+    environment:
+      - MODULE_NAME=poweroff-grif
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8041:8041

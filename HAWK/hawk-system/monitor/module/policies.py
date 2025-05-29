@@ -53,7 +53,21 @@ policies = (
     {"src": "communication-repair", "dst": "communication-volan", "opr": "repair_report"},
 
     {"src": "communication-grif", "dst": "chipher-grif", "opr": "send_data"},
-    {"src": "chipher-grif", "dst": "communication-grif", "opr": "valid_data"}
+    {"src": "chipher-grif", "dst": "communication-grif", "opr": "valid_data"},
+    {"src": "chipher-grif", "dst": "communication-grif", "opr": "to_reboot"},
+    {"src": "communication-grif", "dst": "handler-grif", "opr": "send_data"},
+    {"src": "handler-grif", "dst": "poweroff-grif", "opr": "send_command"},
+    {"src": "poweroff-grif", "dst": "communication-grif", "opr": "report_off"},
+
+    {"src": "user", "dst": "authentication", "opr": "send_pass"},
+    {"src": "user", "dst": "validator-card", "opr": "send_card"},
+    {"src": "authentication", "dst": "authorization", "opr": "auth"},
+    {"src": "validator-card", "dst": "authorization", "opr": "auth_card"},
+    {"src": "authorization", "dst": "handle-command", "opr": "send_command"},
+    {"src": "handle-command", "dst": "chipher-terminal", "opr": "to_chipher"},
+    {"src": "chipher-terminal", "dst": "communication-terminal", "opr": "send"},
+    {"src": "communication-terminal", "dst": "communication-grif", "opr": "to_vetrolov"},
+
 )
 
 def check_operation(id, details) -> bool:

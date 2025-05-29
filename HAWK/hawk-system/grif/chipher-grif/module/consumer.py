@@ -16,11 +16,18 @@ def send_data(id, details):
 
     if details["data"].get("signature") == hash_val:
         del details["data"]["signature"]
-        proceed_to_deliver(id, {
-            "deliver_to": "communication-grif",
-            "operation": "valid_data",
-            "data": details["data"]
-        })
+        if "command" in details["data"].keys():
+            proceed_to_deliver(id, {
+                "deliver_to": "communication-grif",
+                "operation": "to_reboot",
+                "data": details["data"]
+            })
+        else:
+            proceed_to_deliver(id, {
+                "deliver_to": "communication-grif",
+                "operation": "valid_data",
+                "data": details["data"]
+            })
         print("[DEBUG] Send this: ", details["data"])
     else:
         print("[ERROR] No-valid hash!")

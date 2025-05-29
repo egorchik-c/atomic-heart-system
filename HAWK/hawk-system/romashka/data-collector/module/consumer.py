@@ -26,11 +26,12 @@ def data_collect(id, details):
     data_dict.update(details)
     print("DATA_DICT = ", data_dict)
     
-    proceed_to_deliver(id, {
-        "deliver_to": "validator",
-        "operation": "data_to_valid",
-        "data": data_dict
-    })
+    if len(data_dict) >= 2:
+        proceed_to_deliver(id, {
+            "deliver_to": "validator",
+            "operation": "data_to_valid",
+            "data": data_dict
+        })
 
 commands = {
     "send_video": send_video,
