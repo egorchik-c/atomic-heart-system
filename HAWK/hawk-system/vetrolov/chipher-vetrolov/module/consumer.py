@@ -1,41 +1,49 @@
 import os
 import json
 import threading
-import requests
 
 from confluent_kafka import Consumer, OFFSET_BEGINNING
 from .producer import proceed_to_deliver
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
-KOLLEKTIV_URL: str = "http://kollektiv:8012/logs"
+HASH_PATH: str = "/shared/hash"
 
-def to_chipher(id, details):
+def send_data(id, details):
+    print("[DEBUG] Data: ", details["data"])
+
+    with open(HASH_PATH, "r") as file:
+        hash_val = file.readline()
+
+    if details["data"].get("signature") == hash_val:
+        del details["data"]["signature"]
+        proceed_to_deliver(id, {
+            "deliver_to": "handler-vetrolov",
+            "operation": "command_to_process",
+            "data": details["data"]
+        })
+        print("[DEBUG] Send this: ", details["data"])
+    else:
+        print("[ERROR] No-valid hash!")
+
+def sending(id, details):
+    print("[DEBUG] Data: ", details["data"])
+
+    with open(HASH_PATH, "r") as file:
+        hash_val = file.readline()
+
+    details["data"].update({"signature": hash_val})
+
     proceed_to_deliver(id, {
-        "deliver_to": "chipher-grif",
-        "operation": "send_data",
+        "deliver_to": "communication-vetrolov",
+        "operation": "hash_data",
         "data": details["data"]
     })
-    print(f"[DEBUG] Send to Chipher: ", details["data"])
-
-def to_kollektiv(id, details):
-    print("[DEBUG] Send to Kollektiv", details["data"])
-
-    requests.post(KOLLEKTIV_URL, json=details["data"])
-
-def to_handler(id, details):
-    proceed_to_deliver(id, {
-        "deliver_to": "handler-grif",
-        "operation": "send_data",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Handler: ", details["data"])
+    print("[DEBUG] Send this: ", details["data"])
+    
     
 commands = {
-    "to_grif": to_chipher,
-    "valid_data": to_kollektiv,
-    "to_diagnostic": to_chipher,
-    "to_reboot": to_handler,
-    "report_off": to_kollektiv
+    "to_valid": send_data,
+    "to_diagnostic": sending
 }
 
 def handle_event(id, details_str):
@@ -48,7 +56,7 @@ def handle_event(id, details_str):
 
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
-    
+
     command = commands.get(operation)
     if command:
         command(id, details)

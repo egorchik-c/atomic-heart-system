@@ -12,7 +12,7 @@ def reboot_grif(id, details):
     proceed_to_deliver(id, {
         "deliver_to": "communication-grif",
         "operation": "report_off",
-        "data": {"status": "reboot..."}
+        "data": {"status": details["data"]}
     })
     print(f"[DEBUG] Send to Communication: ", details["data"])
 

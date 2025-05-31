@@ -9,7 +9,7 @@ MODULE_NAME: str = os.getenv("MODULE_NAME")
 
 def sending(id, details):
     proceed_to_deliver(id, {
-        "deliver_to": "communication-grif",
+        "deliver_to": "communication-vetrolov",
         "operation": "to_vetrolov",
         "data": details["data"]
     })

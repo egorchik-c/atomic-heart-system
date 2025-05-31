@@ -13,23 +13,32 @@ def send_pass(id, details):
 def send_card(id, details):
     data_collect(id, details["data"])
 
+data_dict = {}
 
 def data_collect(id, details):
     print("[DEBUG] Our data: ", details)
-    
-    if details["data"]["command"] == "reboot":
-        proceed_to_deliver(id, {
-            "deliver_to": "handle-command",
-            "operation": "send_command",
-            "data": {"command": "reboot"}
-        })
-    else:
-        print(f"[{MODULE_NAME}] ERROR: No-valid auth")
+    global data_dict
+
+    if len(data_dict) > 2:
+        data_dict.clear()
+    data_dict.update(details)
+    print("[DEBUG] Our DICT: ", data_dict)
+    try:
+        if len(data_dict) == 2 and data_dict["valid_card"] == "valid":
+            proceed_to_deliver(id, {
+                "deliver_to": "handle-command",
+                "operation": "send_command",
+                "data": {"command": data_dict["command"]}
+            })
+        else:
+            print(f"[{MODULE_NAME}] ERROR: No-valid auth")
+    except KeyError:
+        print("ERROR: no-key!")
     
 
 commands = {
-    # "auth": send_pass,
-    "auth_card": data_collect
+    "auth": send_pass,
+    "auth_card": send_card
 }
 
 def handle_event(id, details_str):

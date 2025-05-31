@@ -66,8 +66,17 @@ policies = (
     {"src": "authorization", "dst": "handle-command", "opr": "send_command"},
     {"src": "handle-command", "dst": "chipher-terminal", "opr": "to_chipher"},
     {"src": "chipher-terminal", "dst": "communication-terminal", "opr": "send"},
-    {"src": "communication-terminal", "dst": "communication-grif", "opr": "to_vetrolov"},
+    {"src": "communication-terminal", "dst": "communication-vetrolov", "opr": "to_vetrolov"},
 
+    {"src": "communication-vetrolov", "dst": "chipher-vetrolov", "opr": "to_valid"},
+    {"src": "chipher-vetrolov", "dst": "handler-vetrolov", "opr": "command_to_process"},
+    {"src": "handler-vetrolov", "dst": "generator-vetrolov", "opr": "poweroff"},
+    {"src": "generator-vetrolov", "dst": "controller-vetrolov", "opr": "send_status"},
+    {"src": "controller-vetrolov", "dst": "battery-vetrolov", "opr": "send_command"},
+    {"src": "battery-vetrolov", "dst": "communication-vetrolov", "opr": "send_status"},
+    {"src": "communication-vetrolov", "dst": "chipher-vetrolov", "opr": "to_diagnostic"},
+    {"src": "chipher-vetrolov", "dst": "communication-vetrolov", "opr": "hash_data"},
+    {"src": "communication-vetrolov", "dst": "communication-grif", "opr": "to_diagnostic"}
 )
 
 def check_operation(id, details) -> bool:

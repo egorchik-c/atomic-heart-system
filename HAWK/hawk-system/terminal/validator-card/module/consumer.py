@@ -12,7 +12,7 @@ def auth(id, details):
         proceed_to_deliver(id, {
             "deliver_to": "authorization",
             "operation": "auth_card",
-            "data": {"command": details["data"]["command"]}
+            "data": {"valid_card": details["data"]["access_card"]}
         })
     else:
         print(f"[{MODULE_NAME}] ERROR: wrong card...")
