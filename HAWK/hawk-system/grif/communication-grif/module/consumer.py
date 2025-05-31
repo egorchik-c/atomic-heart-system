@@ -33,7 +33,7 @@ def to_handler(id, details):
 commands = {
     "to_grif": to_chipher,
     "valid_data": to_kollektiv,
-    "to_diagnostic": to_chipher,
+    "to_grif_off": to_chipher,
     "to_reboot": to_handler,
     "report_off": to_kollektiv
 }

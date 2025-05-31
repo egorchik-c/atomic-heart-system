@@ -7,34 +7,25 @@ from .producer import proceed_to_deliver
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
 
-def sending(id, details):
+def handle(id, details):
     proceed_to_deliver(id, {
-        "deliver_to": "chipher-vetrolov",
-        "operation": "to_valid",
+        "deliver_to": "camera-diagnostic",
+        "operation": "asking",
         "data": details["data"]
     })
-    print(f"[DEBUG] Send to Chipher: ", details["data"])
+    print(f"[{MODULE_NAME}] asking camera")
 
-def send(id, details):
+def to_chipher(id, details):
     proceed_to_deliver(id, {
-        "deliver_to": "chipher-vetrolov",
-        "operation": "to_diagnostic",
+        "deliver_to": "chipher-diagnostic",
+        "operation": "to_grif",
         "data": details["data"]
     })
-    print(f"[DEBUG] Send to Chipher(to_diagnostic): ", details["data"])
-
-def send_to_diagnostic(id, details):
-    proceed_to_deliver(id, {
-        "deliver_to": "communication-diagnostic",
-        "operation": "to_diagnostic",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Diagnostic: ", details["data"])
+    print(f"[{MODULE_NAME}] send aprove")
     
 commands = {
-    "to_vetrolov": sending,
-    "send_status": send,
-    "hash_data": send_to_diagnostic
+    "to_valid": handle,
+    "answer": to_chipher
 }
 
 def handle_event(id, details_str):
@@ -47,10 +38,11 @@ def handle_event(id, details_str):
 
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
-
+    
     command = commands.get(operation)
     if command:
         command(id, details)
+    
 
 def consumer_job(args, config):
     consumer = Consumer(config)

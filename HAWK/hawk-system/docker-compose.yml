@@ -784,6 +784,74 @@ services:
     ports:
       - 8047:8047
 
+  communication-diagnostic:
+    build: ./diagnostic/communication-diagnostic
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: communication-diagnostic
+    environment:
+      - MODULE_NAME=communication-diagnostic
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8048:8048
+
+  chipher-diagnostic:
+    build: ./diagnostic/chipher-diagnostic
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: chipher-diagnostic
+    environment:
+      - MODULE_NAME=chipher-diagnostic
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8049:8049
+
+  validator-diagnostic:
+    build: ./diagnostic/validator-diagnostic
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: validator-diagnostic
+    environment:
+      - MODULE_NAME=validator-diagnostic
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8050:8050
+
+  camera-diagnostic:
+    build: ./diagnostic/camera-diagnostic
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        python start.py /shared/config.ini
+    container_name: camera-diagnostic
+    environment:
+      - MODULE_NAME=camera-diagnostic
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8051:8051
+
   communication-grif:
     build: ./grif/communication-grif
     entrypoint:

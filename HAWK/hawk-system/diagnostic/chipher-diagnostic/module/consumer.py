@@ -6,35 +6,44 @@ from confluent_kafka import Consumer, OFFSET_BEGINNING
 from .producer import proceed_to_deliver
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
+HASH_PATH: str = "/shared/hash"
+
+def send_data(id, details):
+    print("[DEBUG] Data: ", details["data"])
+
+    with open(HASH_PATH, "r") as file:
+        hash_val = file.readline()
+
+    if details["data"].get("signature") == hash_val:
+        del details["data"]["signature"]
+        proceed_to_deliver(id, {
+            "deliver_to": "validator-diagnostic",
+            "operation": "to_valid",
+            "data": details["data"]
+        })
+        print("[DEBUG] Send this: ", details["data"])
+    else:
+        print("[ERROR] No-valid hash!")
 
 def sending(id, details):
-    proceed_to_deliver(id, {
-        "deliver_to": "chipher-vetrolov",
-        "operation": "to_valid",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Chipher: ", details["data"])
+    print("[DEBUG] Data: ", details["data"])
 
-def send(id, details):
-    proceed_to_deliver(id, {
-        "deliver_to": "chipher-vetrolov",
-        "operation": "to_diagnostic",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Chipher(to_diagnostic): ", details["data"])
+    with open(HASH_PATH, "r") as file:
+        hash_val = file.readline()
 
-def send_to_diagnostic(id, details):
+    details["data"].update({"signature": hash_val})
+
     proceed_to_deliver(id, {
         "deliver_to": "communication-diagnostic",
-        "operation": "to_diagnostic",
+        "operation": "hash_data",
         "data": details["data"]
     })
-    print(f"[DEBUG] Send to Diagnostic: ", details["data"])
+    print("[DEBUG] Send this: ", details["data"])
+    
     
 commands = {
-    "to_vetrolov": sending,
-    "send_status": send,
-    "hash_data": send_to_diagnostic
+    "to_valid": send_data,
+    "to_grif": sending
 }
 
 def handle_event(id, details_str):

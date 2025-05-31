@@ -4,39 +4,26 @@ import threading
 
 from confluent_kafka import Consumer, OFFSET_BEGINNING
 from .producer import proceed_to_deliver
+from random import getrandbits
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
 
-def sending(id, details):
-    proceed_to_deliver(id, {
-        "deliver_to": "chipher-vetrolov",
-        "operation": "to_valid",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Chipher: ", details["data"])
+def handle(id, details):
+    print(f"[{MODULE_NAME}] Handle person...")
 
-def send(id, details):
-    proceed_to_deliver(id, {
-        "deliver_to": "chipher-vetrolov",
-        "operation": "to_diagnostic",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Chipher(to_diagnostic): ", details["data"])
+    # flag = bool(getrandbits(1))
+    flag = True
 
-def send_to_diagnostic(id, details):
-    proceed_to_deliver(id, {
-        "deliver_to": "communication-diagnostic",
-        "operation": "to_diagnostic",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Diagnostic: ", details["data"])
+    if flag:
+        print(f"[{MODULE_NAME}] OK...")
+        proceed_to_deliver(id, {
+            "deliver_to": "validator-diagnostic",
+            "operation": "answer",
+            "data": details["data"]
+        })
+    else:
+        print(f"[{MODULE_NAME}] Diagnostic is Failed")
     
-commands = {
-    "to_vetrolov": sending,
-    "send_status": send,
-    "hash_data": send_to_diagnostic
-}
-
 def handle_event(id, details_str):
     """ Обработчик входящих в модуль задач. """
     details = json.loads(details_str)
@@ -47,10 +34,9 @@ def handle_event(id, details_str):
 
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
-
-    command = commands.get(operation)
-    if command:
-        command(id, details)
+    
+    handle(id, details)
+    
 
 def consumer_job(args, config):
     consumer = Consumer(config)

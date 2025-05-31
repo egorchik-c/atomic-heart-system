@@ -9,32 +9,23 @@ MODULE_NAME: str = os.getenv("MODULE_NAME")
 
 def sending(id, details):
     proceed_to_deliver(id, {
-        "deliver_to": "chipher-vetrolov",
+        "deliver_to": "chipher-diagnostic",
         "operation": "to_valid",
         "data": details["data"]
     })
     print(f"[DEBUG] Send to Chipher: ", details["data"])
 
-def send(id, details):
+def to_grif(id, details):
     proceed_to_deliver(id, {
-        "deliver_to": "chipher-vetrolov",
-        "operation": "to_diagnostic",
+        "deliver_to": "communication-grif",
+        "operation": "to_grif_off",
         "data": details["data"]
     })
-    print(f"[DEBUG] Send to Chipher(to_diagnostic): ", details["data"])
-
-def send_to_diagnostic(id, details):
-    proceed_to_deliver(id, {
-        "deliver_to": "communication-diagnostic",
-        "operation": "to_diagnostic",
-        "data": details["data"]
-    })
-    print(f"[DEBUG] Send to Diagnostic: ", details["data"])
+    print(f"[DEBUG] Send to Grif: ", details["data"])
     
 commands = {
-    "to_vetrolov": sending,
-    "send_status": send,
-    "hash_data": send_to_diagnostic
+    "to_diagnostic": sending,
+    "hash_data": to_grif
 }
 
 def handle_event(id, details_str):

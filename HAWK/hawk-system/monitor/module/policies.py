@@ -76,7 +76,15 @@ policies = (
     {"src": "battery-vetrolov", "dst": "communication-vetrolov", "opr": "send_status"},
     {"src": "communication-vetrolov", "dst": "chipher-vetrolov", "opr": "to_diagnostic"},
     {"src": "chipher-vetrolov", "dst": "communication-vetrolov", "opr": "hash_data"},
-    {"src": "communication-vetrolov", "dst": "communication-grif", "opr": "to_diagnostic"}
+    {"src": "communication-vetrolov", "dst": "communication-diagnostic", "opr": "to_diagnostic"},
+
+    {"src": "communication-diagnostic", "dst": "chipher-diagnostic", "opr": "to_valid"},
+    {"src": "chipher-diagnostic", "dst": "validator-diagnostic", "opr": "to_valid"},
+    {"src": "validator-diagnostic", "dst": "camera-diagnostic", "opr": "asking"},
+    {"src": "camera-diagnostic", "dst": "validator-diagnostic", "opr": "answer"},
+    {"src": "validator-diagnostic", "dst": "chipher-diagnostic", "opr": "to_grif"},
+    {"src": "chipher-diagnostic", "dst": "communication-diagnostic", "opr": "hash_data"},
+    {"src": "communication-diagnostic", "dst": "communication-grif", "opr": "to_grif_off"}
 )
 
 def check_operation(id, details) -> bool:
