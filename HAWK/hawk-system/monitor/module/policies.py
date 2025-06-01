@@ -73,6 +73,7 @@ policies = (
     {"src": "handler-vetrolov", "dst": "generator-vetrolov", "opr": "poweroff"},
     {"src": "generator-vetrolov", "dst": "controller-vetrolov", "opr": "send_status"},
     {"src": "controller-vetrolov", "dst": "battery-vetrolov", "opr": "send_command"},
+    {"src": "controller-vetrolov", "dst": "handler-vetrolov", "opr": "stop_off"},
     {"src": "battery-vetrolov", "dst": "communication-vetrolov", "opr": "send_status"},
     {"src": "communication-vetrolov", "dst": "chipher-vetrolov", "opr": "to_diagnostic"},
     {"src": "chipher-vetrolov", "dst": "communication-vetrolov", "opr": "hash_data"},

@@ -6,6 +6,7 @@ import threading
 from uuid  import uuid4
 from confluent_kafka import Producer
 from time import sleep
+from random import choice
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
 requests_queue: multiprocessing.Queue = None
@@ -14,6 +15,7 @@ def get_telemetry():
     while True:
         telemetry = {
             "motion_detected": True,
+            "person": choice(["EGOR CHERNOV", "IVAN REICHMAN", "NABLEY OMELCHENKO", "SPIDER MAN", "REPAIR"])
         }
 
         print(f"[{MODULE_NAME}] Telemetry data: {telemetry}")

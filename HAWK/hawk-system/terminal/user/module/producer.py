@@ -30,7 +30,7 @@ def get_pass():
             "data": command
         })
 
-        sleep(10)
+        sleep(30)
 
 def proceed_to_deliver(id, details):
     details["id"] = id
@@ -54,7 +54,7 @@ def producer_job(_, config, request_queue: multiprocessing.Queue):
             event_details["id"],
             callback=delivery_callback
         )
-        producer.poll(15000)
+        producer.poll(35000)
         producer.flush()
         print(f"[{MODULE_NAME}] Send data: {event_details}")
 

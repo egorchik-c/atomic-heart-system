@@ -5,7 +5,6 @@ import threading
 
 from uuid  import uuid4
 from confluent_kafka import Producer
-from random import choice
 from time import sleep
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
@@ -13,14 +12,8 @@ requests_queue: multiprocessing.Queue = None
 
 def get_video():
     while True:
-        # sample_video = {
-        #     "video-file": "some video",
-        #     "person": choice(["EGOR CHERNOV", "IVAN REICHMAN", "NABLEY OMELCHENKO", "SPIDER MAN", "REPAIR"])
-        # }
-
         sample_video = {
-            "video-file": "video",
-            "person": "ALOOOOOOO"
+            "video-file": "some video"
         }
 
         print(f"[{MODULE_NAME}] Video to sending: {sample_video}")

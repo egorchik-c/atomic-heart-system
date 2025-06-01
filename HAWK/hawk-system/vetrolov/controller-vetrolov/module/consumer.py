@@ -4,17 +4,30 @@ import threading
 
 from confluent_kafka import Consumer, OFFSET_BEGINNING
 from .producer import proceed_to_deliver
+from random import getrandbits
 
 MODULE_NAME: str = os.getenv("MODULE_NAME")
 
 def control(id, details):
     print(f"[{MODULE_NAME}] Check voltage...")
     
-    proceed_to_deliver(id, {
-        "deliver_to": "battery-vetrolov",
-        "operation": "send_command",
-        "data": {"command": "power off"}
-    })
+    # flag = bool(getrandbits(1))
+    flag = True
+
+    if flag:
+        print(f"[{MODULE_NAME}] High voltage...")
+        proceed_to_deliver(id, {
+            "deliver_to": "handler-vetrolov",
+            "operation": "stop_off",
+            "data": {"command": "stop off"}
+        })
+    else: 
+        print(f"[{MODULE_NAME}] Normal voltage...")
+        proceed_to_deliver(id, {
+            "deliver_to": "battery-vetrolov",
+            "operation": "send_command",
+            "data": {"command": "power off"}
+        })
     
     
 def handle_event(id, details_str):

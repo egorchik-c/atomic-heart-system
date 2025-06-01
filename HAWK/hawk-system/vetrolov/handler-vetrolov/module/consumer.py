@@ -18,7 +18,15 @@ def handle(id, details):
         })
     else:
         print(f"[{MODULE_NAME}] No valid command")
+
+def stop_off(id, details):
+    print(f"[{MODULE_NAME}] Stopping send command off....")
     
+commands = {
+    "command_to_process": handle,
+    "stop_off": stop_off
+}
+
 def handle_event(id, details_str):
     """ Обработчик входящих в модуль задач. """
     details = json.loads(details_str)
@@ -30,7 +38,9 @@ def handle_event(id, details_str):
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
     
-    handle(id, details)
+    command = commands.get(operation)
+    if command:
+        command(id, details)
     
 
 def consumer_job(args, config):
