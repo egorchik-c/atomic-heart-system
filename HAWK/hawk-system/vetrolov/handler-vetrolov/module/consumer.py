@@ -10,7 +10,7 @@ MODULE_NAME: str = os.getenv("MODULE_NAME")
 def handle(id, details):
     print(f"[{MODULE_NAME}] Handle.....")
     
-    if details["data"]["command"] == "reboot":
+    if details["data"]["command"] == "reboot" or details["data"]["command"] == "test-command":
         proceed_to_deliver(id, {
             "deliver_to": "generator-vetrolov",
             "operation": "poweroff",

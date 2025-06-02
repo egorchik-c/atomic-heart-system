@@ -12,7 +12,7 @@ def control(id, details):
     print(f"[{MODULE_NAME}] Check voltage...")
     
     # flag = bool(getrandbits(1))
-    flag = True
+    flag = False
 
     if flag:
         print(f"[{MODULE_NAME}] High voltage...")

@@ -627,3 +627,13 @@ def check_operation(id, details) -> bool:
 |Обработчик команд|handler-grif|grif|
 |Отключение системы|poweroff-grif|grif|
 |Коллектив|kollektiv|kollektiv|
+
+## Запуск приложения и тестов
+
+### Запуск приложения
+
+см. [инструкцию по запуску](../README.md)
+
+### Запуск тестов
+
+![Тесты двух базовых сценариев](docs/images/test_event.png)

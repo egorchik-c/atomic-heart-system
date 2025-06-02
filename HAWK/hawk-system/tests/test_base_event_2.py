@@ -1,92 +1,47 @@
-import pytest
+import json
+import time
+import uuid
 import requests
-from unittest.mock import patch
-from volan.main import app as app_v
-from grif.main import app as app_g
-from kollektiv.main import app as app_k
-from vetrolov.main import app as app_vetr
-from diagnostic.main import app as app_d
 
-VOLAN_URL = "http://localhost:8000/motion"
-GRIF_URL = "http://localhost:8001/process"
-KOLLEKTIV_URL = "http://localhost:8002/log"
-VETROLOV_URL = "http://vetrolov:8005/energy"
-DIAG_URL = "http://diagnostic:8006/confirm"
+from confluent_kafka import Producer
 
-class MockResponse:
-    def __init__(self, json_data, status_code):
-        self.json_data = json_data
-        self.status_code = status_code
+KAFKA_BOOTSTRAP = "broker:29092"
+TOPIC = "monitor"
+KOLLEKTIV_ENDPOINT = "http://kollektiv:8012/logs"
 
-    def json(self):
-        return self.json_data
-    
-@pytest.fixture
-def volan_client():
-    return app_v.test_client()
+def send_test_message(test_id):
+    payload = {
+        "id": test_id,
+        "source": "authorization",
+        "deliver_to": "handle-command",
+        "operation": "send_command",
+        "data": {"command": "test-command"}
+    }
+    producer = Producer({'bootstrap.servers': KAFKA_BOOTSTRAP})
+    producer.produce(TOPIC, json.dumps(payload), key=test_id)
+    producer.flush()
 
-@pytest.fixture
-def grif_client():
-    return app_g.test_client()
+def test_message_reaches_kollektiv():
+    test_id = str(uuid.uuid4())
+    send_test_message(test_id)
 
-@pytest.fixture
-def kollektiv_client():
-    return app_k.test_client()
+    timeout = 15
+    found = False
 
-@pytest.fixture
-def vetrolov_client():
-    return app_vetr.test_client()
+    time.sleep(60)
+    for i in range(timeout):
+        time.sleep(1)
+        print(f"[{i+1}/{timeout}] Проверка логов Коллектива...", flush=True)
+        try:
+            response = requests.get(KOLLEKTIV_ENDPOINT)
+            if response.status_code == 200:
+                logs = response.json()
+                if any(log.get("id") == test_id for log in logs):
+                    found = True
+                    break
+            else:
+                print(f"[WARNING] Коллектив ответил с кодом {response.status_code}")
+        except Exception as e:
+            print(f"[WARNING] Ошибка при запросе: {e}")
 
-@pytest.fixture
-def diagnostic_client():
-    return app_d.test_client()
-
-@pytest.fixture
-def mock_reboot():
-    with patch("requests.post") as mock_post:
-        def side_effect(url, json):
-            if url == GRIF_URL:
-                return MockResponse({"message": "reboot"}, 200)
-            elif url == KOLLEKTIV_URL:
-                return MockResponse({"status": "reboot"}, 200)
-            return MockResponse({}, 404)
-
-        mock_post.side_effect = side_effect
-        yield mock_post
-
-@pytest.fixture
-def mock_power_off():
-    with patch("requests.post") as mock_post:
-        def side_effect(url, json):
-            if url == VETROLOV_URL:
-                return MockResponse({"status": "Diagnostic OK"}, 200)
-            elif url == DIAG_URL:
-                return MockResponse({"status": "Diagnostic OK"}, 200)
-            elif url == GRIF_URL:
-                return MockResponse({"source": "Диагностика", "message": "Отключение питания Ветролова"}, 200)
-            elif url == KOLLEKTIV_URL:
-                return MockResponse({"status": "Отключение питания Ветролова"}, 200)
-            return MockResponse({}, 404)
-
-        mock_post.side_effect = side_effect
-        yield mock_post
-
-def test_reboot(mock_reboot, grif_client, kollektiv_client):
-    to_grif = grif_client.post(GRIF_URL, json={"message": "reboot"})
-    to_kollektiv = kollektiv_client.post(KOLLEKTIV_URL, json={"message": "reboot"})
-
-    assert to_grif.status_code == 200
-    assert to_kollektiv.status_code == 200
-    assert to_kollektiv.json == {"status": "reboot"}
-
-def test_power_off(mock_power_off, vetrolov_client, diagnostic_client, grif_client, kollektiv_client):
-    to_vetrolov = vetrolov_client.post(VETROLOV_URL, json={"message": "power_off"})
-    to_diagnostic = diagnostic_client.post(DIAG_URL, json={"message": "power_off"})
-    to_grif = grif_client.post(GRIF_URL, json={"source": "Диагностика", "message": "Отключение питания Ветролова"})
-    to_kollektiv = kollektiv_client.post(KOLLEKTIV_URL, json={"source": "Диагностика", "message": "Отключение питания Ветролова"})
-    
-    assert to_vetrolov.status_code == 200
-    assert to_diagnostic.status_code == 200
-    assert to_grif.status_code == 200
-    assert to_kollektiv.status_code == 200
-    assert to_kollektiv.json == {"status": "Отключение питания Ветролова"}
+    assert found, f"Сообщение с id={test_id} не дошло до Коллектива"

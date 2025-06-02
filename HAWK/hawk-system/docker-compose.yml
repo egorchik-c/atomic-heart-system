@@ -919,3 +919,19 @@ services:
       - ./shared:/shared
     ports:
       - 8041:8041
+
+  test-runner:
+    build: ./tests
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo 'Giving Kafka a bit of time to start up…'
+        sleep 25
+        pytest
+    container_name: tests-runner
+    environment:
+      - MODULE_NAME=test-runner
+    ports:
+      - 8052:8052
+
